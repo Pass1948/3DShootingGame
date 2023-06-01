@@ -38,7 +38,7 @@ public class PlayerMover : MonoBehaviour
    {
         // 월드기준 움직임
         //controller.Move(moveDir * runSpeed * Time.deltaTime);
-
+        // Mathf.Lerp() 애니메이션에 부드러운 전환을 넣기위한 정밀작업
         if (moveDir.magnitude <= 0)     // 움직이지 않을 경우
             moveSpeed = Mathf.Lerp(moveSpeed, 0, 1f);         // 선형보간, moveSpeed가 0을 목표로 0.5퍼센트씩 떨어짐
 
@@ -55,8 +55,6 @@ public class PlayerMover : MonoBehaviour
         // 로컬기준 움직임
         controller.Move(transform.forward * moveDir.z * runSpeed * Time.deltaTime);
         controller.Move(transform.right * moveDir.x * runSpeed * Time.deltaTime);
-
-        // Mathf.Lerp() 애니메이션에 부드러운 전환을 넣기위한 정밀작업
 
         animator.SetFloat("XSpeed", moveDir.x, 0.1f, Time.deltaTime);
         animator.SetFloat("YSpeed", moveDir.z, 0.1f, Time.deltaTime);
