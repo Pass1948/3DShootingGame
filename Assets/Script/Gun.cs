@@ -7,12 +7,15 @@ public class Gun : MonoBehaviour
     [SerializeField] float maxDistance;
     [SerializeField] float bulletSpeed;
     [SerializeField] int damage;
-    [SerializeField] ParticleSystem hiyEffect;
+    [SerializeField] ParticleSystem hitEffect;
     [SerializeField] ParticleSystem muzzleEffect;
     [SerializeField] TrailRenderer bulletTrail;
+    private ObjectPool objectPool;
 
-    
-
+    private void Awake()
+    {
+        objectPool = GetComponent<ObjectPool>();
+    }
     public void Fire() 
     {
         muzzleEffect.Play();
@@ -21,8 +24,10 @@ public class Gun : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, maxDistance))
         {
             IHittable hittable = hit.transform.GetComponent<IHittable>();
-            ParticleSystem effect = Instantiate(hiyEffect, hit.point, Quaternion.LookRotation(hit.normal));
+            ParticleSystem effect = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
             effect.transform.parent = hit.transform;        // 이펙트가 오브젝트를 따라 다니게 이펙트를 해당 오브젝트의 하위자식으로 설정함
+            Poolable poolable = objectPool.Get();
+            poolable.transform.parent = effect.transform;
             Destroy(effect.gameObject, 3f);
 
             StartCoroutine(TrailRoutinue(muzzleEffect.transform.position, hit.point));
