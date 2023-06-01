@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class TPSCameraController : MonoBehaviour
 {
     [SerializeField] Transform cameraRoot;
-    //[SerializeField] Transform aimTarget;
+    [SerializeField] Transform aimTarget;
     [SerializeField] float lookDistance;
     [SerializeField] float mouseSensitivity;
 
@@ -37,7 +37,7 @@ public class TPSCameraController : MonoBehaviour
     private void Rcate() 
     {
         Vector3 lookPoint = Camera.main.transform.position + Camera.main.transform.forward * lookDistance;
-        //aimTarget.position = lookPoint;
+        aimTarget.position = lookPoint;
         lookPoint.y = transform.position.y;
         transform.LookAt(lookPoint);
     }
