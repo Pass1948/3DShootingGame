@@ -40,7 +40,7 @@ public class PlayerMover : MonoBehaviour
         //controller.Move(moveDir * runSpeed * Time.deltaTime);
 
         if (moveDir.magnitude <= 0)     // 움직이지 않을 경우
-            moveSpeed = Mathf.Lerp(moveSpeed, 0, 0.5f);         // 선형보간, moveSpeed가 0을 목표로 0.5퍼센트씩 떨어짐
+            moveSpeed = Mathf.Lerp(moveSpeed, 0, 1f);         // 선형보간, moveSpeed가 0을 목표로 0.5퍼센트씩 떨어짐
 
         else if (isWalking)             // 움직일 경우
         {
