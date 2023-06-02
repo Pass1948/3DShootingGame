@@ -1,62 +1,65 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class ObjectPool : MonoBehaviour
+namespace ObjectPooling
 {
-    [SerializeField] Poolable poolablePrefab;
 
-    [SerializeField] int poolSize;
-    [SerializeField] int maxSize;
-
-    private Stack<Poolable> objectPool = new Stack<Poolable>();
-
-    private void Awake()
+    public class ObjectPool : MonoBehaviour
     {
-        CreatePool();
-    }
+        [SerializeField] Poolable poolablePrefab;
 
-    private void CreatePool() 
-    {
-        for (int i = 0; i < poolSize; i++)
+        [SerializeField] int poolSize;
+        [SerializeField] int maxSize;
+
+        private Stack<Poolable> objectPool = new Stack<Poolable>();
+
+        private void Awake()
         {
-            Poolable poolable = Instantiate(poolablePrefab);
-            poolable.gameObject.SetActive(false);
-            poolable.transform.SetParent(transform);
-            poolable.Pool = this;
-            objectPool.Push(poolable);
-        }
-    }
-
-    public Poolable Get() 
-    {
-        if (objectPool.Count > 0)
-        {
-            Poolable poolable = objectPool.Pop();
-            poolable.gameObject.SetActive(true);
-            poolable.transform.parent = null;
-            return poolable;
+            CreatePool();
         }
 
-        else
+        private void CreatePool()
         {
-            Poolable poolable = Instantiate(poolablePrefab);
-            poolable.Pool = this;
-            return poolable;
+            for (int i = 0; i < poolSize; i++)
+            {
+                Poolable poolable = Instantiate(poolablePrefab);
+                poolable.gameObject.SetActive(false);
+                poolable.transform.SetParent(transform);
+                poolable.Pool = this;
+                objectPool.Push(poolable);
+            }
         }
-    }
 
-    public void Release(Poolable poolable)
-    {
-        if (objectPool.Count < maxSize)
+        public Poolable Get() // 대여
         {
-            poolable.gameObject.SetActive(false);
-            poolable.transform.SetParent(transform);
-            objectPool.Push(poolable);
+            if (objectPool.Count > 0)
+            {
+                Poolable poolable = objectPool.Pop();
+                poolable.gameObject.SetActive(true);
+                poolable.transform.parent = null;
+                return poolable;
+            }
+
+            else             // 사이즈 이상의 갯수면 새로만들어서 줌
+            {
+                Poolable poolable = Instantiate(poolablePrefab);
+                poolable.Pool = this;
+                return poolable;
+            }
         }
-        else
+
+        public void Release(Poolable poolable)
         {
-            Destroy(poolable.gameObject);
+            if (objectPool.Count < maxSize)                     // 최대 사이즈를 넘을경우 반납과 초과갯수는 삭제
+            {
+                poolable.gameObject.SetActive(false);
+                poolable.transform.SetParent(transform);
+                objectPool.Push(poolable);
+            }
+            else
+            {
+                Destroy(poolable.gameObject);
+            }
         }
     }
 }

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7163693602928879860}
   - component: {fileID: 6513206728852792416}
-  - component: {fileID: -4180692817801392710}
   m_Layer: 0
   m_Name: BuletTrail
   m_TagString: Untagged
@@ -132,16 +131,3 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
---- !u!114 &-4180692817801392710
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2886275887037657326}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce62d77c30285f048962e01d5ce55002, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  releaseTime: 2

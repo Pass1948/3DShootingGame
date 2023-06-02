@@ -10,12 +10,6 @@ public class Gun : MonoBehaviour
     [SerializeField] ParticleSystem hitEffect;
     [SerializeField] ParticleSystem muzzleEffect;
     [SerializeField] TrailRenderer bulletTrail;
-    private ObjectPool objectPool;
-
-    private void Awake()
-    {
-        objectPool = GetComponent<ObjectPool>();
-    }
     public void Fire() 
     {
         muzzleEffect.Play();
@@ -24,28 +18,37 @@ public class Gun : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, maxDistance))
         {
             IHittable hittable = hit.transform.GetComponent<IHittable>();
-            ParticleSystem effect = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
+            //ParticleSystem effect = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
+            ParticleSystem effect = GameManager.Pool.Get(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
             effect.transform.parent = hit.transform;        // 이펙트가 오브젝트를 따라 다니게 이펙트를 해당 오브젝트의 하위자식으로 설정함
-            Poolable poolable = objectPool.Get();
-            poolable.transform.parent = effect.transform;
-            Destroy(effect.gameObject, 3f);
+           // Destroy(effect.gameObject, 3f);
 
+            StartCoroutine(ReleaseRoutine(effect.gameObject));
             StartCoroutine(TrailRoutinue(muzzleEffect.transform.position, hit.point));
 
             hittable?.Hit(hit, damage);
         }
         else
         {
-            StartCoroutine(TrailRoutinue(muzzleEffect.transform.position, Camera.main.transform.forward *maxDistance));
-
+            StartCoroutine(TrailRoutinue(muzzleEffect.transform.position, Camera.main.transform.forward * maxDistance));
         }
     }
 
-    IEnumerator TrailRoutinue(Vector3 startPoint, Vector3 endPoint)
+    IEnumerator ReleaseRoutine(GameObject effect)
     {
-        TrailRenderer trail = Instantiate(bulletTrail, muzzleEffect.transform.position, Quaternion.identity);
-        float totalTime = Vector2.Distance(startPoint, endPoint) / bulletSpeed;
+        yield return new WaitForSeconds(3f);
+        GameManager.Pool.Release(effect);
+    }
 
+   IEnumerator TrailRoutinue(Vector3 startPoint, Vector3 endPoint)
+    {
+        // TrailRenderer trail = Instantiate(bulletTrail, muzzleEffect.transform.position, Quaternion.identity);
+        TrailRenderer trail = GameManager.Pool.Get(bulletTrail, startPoint, Quaternion.identity);
+
+        // 오브젝트풀에서 꺼내기전 전상황에 대한 형태를 초기상태로 돌려야 하기애 clear를 사용함
+        trail.Clear();
+
+        float totalTime = Vector2.Distance(startPoint, endPoint) / bulletSpeed;
         float rate = 0;
 
         while (rate < 1)
@@ -55,6 +58,21 @@ public class Gun : MonoBehaviour
             yield return null;
         }
 
-        Destroy(trail);
+        //Destroy(trail);
+        GameManager.Pool.Release(trail.gameObject);
+
+        
+        // 오브젝트풀을 사용할시 주의사항
+        // 인스턴스 객체들이 없는게 아닌 비활성화된 상태로 존재하기에 ==null이라는 조건문만은 쓸수없다
+        // 만약 체크를 해야될 경우trail.gameObject.activeSelf == false와 같이 게임오브젝트의 활성화 경우를 체크해서 사용해야한다
+        yield return null;
+        if (!trail.IsValid())    
+        {
+            Debug.Log("trail이 없음");
+        }
+        else
+        {
+            Debug.Log("trail이 있음");
+        }
     }
 }
