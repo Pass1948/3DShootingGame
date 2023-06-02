@@ -6,6 +6,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerShooter : MonoBehaviour
 {
+    public TrailRenderer bulletTrail;
+
     [SerializeField] float reloadTime;
     [SerializeField] Rig aimRig;
     [SerializeField] WeaponHolder weaponHolder;
@@ -15,6 +17,8 @@ public class PlayerShooter : MonoBehaviour
 
     private void Awake()
     {
+        // 유니티 기본기능으로 Resources 폴더에 있는 오브젝트를 불러오는게 가능하다
+        // bulletTrail = Resources.Load<TrailRenderer>("Prefabs/BulletTrail");
         animator = GetComponent<Animator>();
     }
 
