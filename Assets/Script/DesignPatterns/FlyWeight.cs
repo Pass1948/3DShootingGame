@@ -63,7 +63,7 @@ namespace DesingPattern
             {
                 this.Name = name;
                 this.MaxHP = maxHP;
-                this.Damage = damage;
+                this.Damage = damage; 
                 this.Shield = shield;
                 this.Desription = desription;
             }
